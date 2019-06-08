@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: Apache-2.0 OR GPL-2.0-or-later
+
 version: '3'
 
 services:
@@ -21,6 +23,7 @@ services:
       - db
     environment:
       - WEBPORT=3005
+      - INITIALADMINEMAIL=test@example.com
 
   db:
     image: postgres

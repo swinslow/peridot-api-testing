@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["./utils/wait-for-it/wait-for-it.sh", "sut:3005", "--", "/obsidian-api-testing/obsidian-api-testing"]
+    depends_on:
+      - sut
+      - db
+
+  sut:
+    build:
+      context: ../obsidian-api
+      dockerfile: Dockerfile
+    command: ["./utils/wait-for-it/wait-for-it.sh", "db:5432", "--", "/go/bin/obsidian-api"]
+    volumes:
+      - ../obsidian-api:/obsidian-api
+    depends_on:
+      - db
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: postgres-dev
+

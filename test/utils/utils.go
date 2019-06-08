@@ -4,8 +4,8 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/yudai/gojsondiff"
 	"github.com/swinslow/obsidian-api-testing/internal/testresult"
+	"github.com/yudai/gojsondiff"
 )
 
 // Pass fills in the success fields.
@@ -16,7 +16,7 @@ func Pass(res *testresult.TestResult) {
 // FailTest fills in the failure fields for a test that failed
 // for some reason other than because the JSON strings did not
 // match.
-func FailTest(res *testresult.TestResult, step float32, msg error) {
+func FailTest(res *testresult.TestResult, step string, msg error) {
 	res.Success = false
 	res.FailStep = step
 	res.FailError = msg
@@ -25,7 +25,7 @@ func FailTest(res *testresult.TestResult, step float32, msg error) {
 // FailMatch fills in the failure fields for a test that failed
 // because the desired JSON string did not match the JSON string
 // that was received.
-func FailMatch(res *testresult.TestResult, step float32, wanted string, got []byte) {
+func FailMatch(res *testresult.TestResult, step string, wanted string, got []byte) {
 	res.Success = false
 	res.FailStep = step
 	res.FailWanted = wanted
@@ -39,18 +39,22 @@ func FailMatch(res *testresult.TestResult, step float32, wanted string, got []by
 func IsMatch(wanted string, got []byte) bool {
 	differ := gojsondiff.New()
 	d, err := differ.Compare([]byte(wanted), got)
+	// fmt.Printf("*** WANTED:  %#v\n", wanted)
+	// fmt.Printf("*** GOT:     %#v\n", got)
+	// fmt.Printf("*** ERR:     %#v\n", err)
+	// fmt.Printf("*** DIFF:    %#v\n", d)
 	if err != nil {
 		return false
 	}
 
-	return d.Modified()
+	return !d.Modified()
 }
 
 // GetContent makes an HTTP GET call to the indicated URL.
 // On success, it reads the response body into a got byte slice
 // and handles closing the body. On failure, it fills in the
 // failure code in the TestResult and returns an error.
-func GetContent(res *testresult.TestResult, step float32, url string) ([]byte, error) {
+func GetContent(res *testresult.TestResult, step string, url string) ([]byte, error) {
 	resp, err := http.Get(url)
 	if err != nil {
 		FailTest(res, step, err)

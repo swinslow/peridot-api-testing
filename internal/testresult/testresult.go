@@ -17,9 +17,9 @@ type TestResult struct {
 	Success bool
 
 	// FailStep indicates which step failed, if any.
-	FailStep float32
+	FailStep string
 
-	// FailOutput provides the error of the failing step,
+	// FailError provides the error of the failing step,
 	// if any.
 	FailError error
 

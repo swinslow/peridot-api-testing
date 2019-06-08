@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["./utils/wait-for-it/wait-for-it.sh", "sut:3005", "--", "/obsidian-api-testing/obsidian-api-testing"]
+    command: ["./utils/wait-for-it/wait-for-it.sh", "sut:3005", "-t", "8", "--", "/obsidian-api-testing/obsidian-api-testing"]
     depends_on:
       - sut
       - db
@@ -14,11 +14,13 @@ services:
     build:
       context: ../obsidian-api
       dockerfile: Dockerfile
-    command: ["./utils/wait-for-it/wait-for-it.sh", "db:5432", "--", "/go/bin/obsidian-api"]
+    command: ["./utils/wait-for-it/wait-for-it.sh", "db:5432", "-t", "5", "--", "/go/bin/obsidian-api"]
     volumes:
       - ../obsidian-api:/obsidian-api
     depends_on:
       - db
+    environment:
+      - WEBPORT=3005
 
   db:
     image: postgres

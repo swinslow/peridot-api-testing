@@ -24,15 +24,15 @@ func helloGet(root string) *testresult.TestResult {
 		ID:      "GET",
 	}
 
+	res.Wanted = `{"success": true, "message": "hello"}`
 	url := root + "/hello"
-	got, err := utils.GetContent(res, "1", url)
+	err := utils.GetContent(res, "1", url, 200)
 	if err != nil {
 		return res
 	}
 
-	wanted := `{"success": true, "message": "hello"}`
-	if !utils.IsMatch(wanted, got) {
-		utils.FailMatch(res, "2", wanted, got)
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
 		return res
 	}
 

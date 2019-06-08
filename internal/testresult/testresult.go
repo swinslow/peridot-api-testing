@@ -25,11 +25,9 @@ type TestResult struct {
 	// if any.
 	FailError error
 
-	// FailWanted provides the JSON string that was desired,
-	// on error.
-	FailWanted string
+	// Wanted holds the latest JSON string that was desired.
+	Wanted string
 
-	// FailGot provides the JSON string that was received,
-	// on error.
-	FailGot string
+	// Got holds the latest JSON byte slice that was received.
+	Got []byte
 }

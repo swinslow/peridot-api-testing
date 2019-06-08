@@ -48,8 +48,8 @@ func main() {
 				fmt.Printf("    Status: FAIL\n")
 				fmt.Printf("    Step:   %s\n", r.FailStep)
 				fmt.Printf("    Errors: %v\n", r.FailError)
-				fmt.Printf("    Wanted: %s\n", r.FailWanted)
-				fmt.Printf("    Got:    %s\n", r.FailWanted)
+				fmt.Printf("    Wanted: %s\n", r.Wanted)
+				fmt.Printf("    Got:    %s\n", r.Got)
 				fmt.Printf("\n==========\n\n")
 			}
 		}

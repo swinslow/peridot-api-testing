@@ -15,5 +15,8 @@ func RunTests(root string) []*testresult.TestResult {
 	rs = runHelloTests(root)
 	allRs = append(allRs, rs...)
 
+	rs = runUsersTests(root)
+	allRs = append(allRs, rs...)
+
 	return allRs
 }

@@ -24,7 +24,7 @@ func usersGet(root string) *testresult.TestResult {
 		ID:      "GET",
 	}
 
-	res.Wanted = `{"users": [{"id": 1, "name": "Admin", "email": "test@example.com", "access": admin"}]}`
+	res.Wanted = `{"users": [{"id": 1, "name": "Admin", "github": "octocat", "access": admin"}]}`
 	url := root + "/users"
 	err := utils.GetContent(res, "1", url, 200)
 	if err != nil {

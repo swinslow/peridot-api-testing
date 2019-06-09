@@ -23,7 +23,8 @@ services:
       - db
     environment:
       - WEBPORT=3005
-      - INITIALADMINEMAIL=test@example.com
+      - INITIALADMINGITHUB=octocat
+      - JWTSECRETKEY=keyForTesting
 
   db:
     image: postgres

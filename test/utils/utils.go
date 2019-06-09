@@ -58,13 +58,42 @@ func IsMatch(res *testresult.TestResult) bool {
 // and handles closing the body. On failure, it fills in the
 // failure code in the TestResult and returns an error.
 func GetContent(res *testresult.TestResult, step string, url string, code int) error {
-	// make GET call
 	resp, err := http.Get(url)
 	if err != nil {
 		FailTest(res, step, err)
 		return err
 	}
 
+	return helperGetContent(res, resp, step, code)
+}
+
+// GetContentNoFollow makes an HTTP GET call to the indicated
+// URL, and will NOT follow redirects. It otherwise acts
+// identically to GetContent.
+func GetContentNoFollow(res *testresult.TestResult, step string, url string, code int) error {
+	client := &http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		FailTest(res, step, err)
+		return err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		FailTest(res, step, err)
+		return err
+	}
+
+	return helperGetContent(res, resp, step, code)
+}
+
+// helperGetContent does the rest of the GetContent or
+// GetContentNoFollow activities, after the decision is
+// made on whether to follow any redirects.
+func helperGetContent(res *testresult.TestResult, resp *http.Response, step string, code int) error {
 	// parse content body
 	b, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()

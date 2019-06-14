@@ -26,7 +26,7 @@ func helloGet(root string) *testresult.TestResult {
 
 	res.Wanted = `{"success": true, "message": "hello"}`
 	url := root + "/hello"
-	err := utils.GetContent(res, "1", url, 200)
+	err := utils.GetContent(res, "1", url, 200, "none")
 	if err != nil {
 		return res
 	}

@@ -25,7 +25,7 @@ func loginGet(root string) *testresult.TestResult {
 	}
 
 	url := root + "/auth/login"
-	err := utils.GetContentNoFollow(res, "1", url, 307)
+	err := utils.GetContentNoFollow(res, "1", url, 307, "none")
 	if err != nil {
 		return res
 	}

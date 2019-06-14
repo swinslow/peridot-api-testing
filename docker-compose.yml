@@ -23,7 +23,7 @@ services:
       - db
     environment:
       - WEBPORT=3005
-      - INITIALADMINGITHUB=octocat
+      - INITIALADMINGITHUB=admin
       - JWTSECRETKEY=keyForTesting
       - GITHUBCLIENTID=abcdef0123abcdef4567
       - GITHUBCLIENTSECRET=abcdef0123abcdef4567abcdef8901abcdef2345

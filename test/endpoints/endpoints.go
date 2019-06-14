@@ -3,7 +3,7 @@
 package endpoints
 
 import (
-	"github.com/swinslow/obsidian-api-testing/internal/testresult"
+	"github.com/swinslow/peridot-api-testing/internal/testresult"
 )
 
 // RunTests runs all of the endpoints test suites, and accumulates

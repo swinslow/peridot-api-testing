@@ -1,4 +1,4 @@
-module github.com/swinslow/obsidian-api-testing
+module github.com/swinslow/peridot-api-testing
 
 go 1.12
 

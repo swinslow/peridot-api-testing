@@ -7,18 +7,18 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: ["./utils/wait-for-it/wait-for-it.sh", "sut:3005", "-t", "8", "--", "/obsidian-api-testing/obsidian-api-testing"]
+    command: ["./utils/wait-for-it/wait-for-it.sh", "sut:3005", "-t", "8", "--", "/peridot-api-testing/peridot-api-testing"]
     depends_on:
       - sut
       - db
 
   sut:
     build:
-      context: ../obsidian-api
+      context: ../peridot-api
       dockerfile: Dockerfile
-    command: ["./utils/wait-for-it/wait-for-it.sh", "db:5432", "-t", "5", "--", "/go/bin/obsidian-api"]
+    command: ["./utils/wait-for-it/wait-for-it.sh", "db:5432", "-t", "5", "--", "/go/bin/peridot-api"]
     volumes:
-      - ../obsidian-api:/obsidian-api
+      - ../peridot-api:/peridot-api
     depends_on:
       - db
     environment:

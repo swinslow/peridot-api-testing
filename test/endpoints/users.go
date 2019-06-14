@@ -3,8 +3,8 @@
 package endpoints
 
 import (
-	"github.com/swinslow/obsidian-api-testing/internal/testresult"
-	"github.com/swinslow/obsidian-api-testing/test/utils"
+	"github.com/swinslow/peridot-api-testing/internal/testresult"
+	"github.com/swinslow/peridot-api-testing/test/utils"
 )
 
 func runUsersTests(root string) []*testresult.TestResult {

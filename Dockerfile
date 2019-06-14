@@ -2,10 +2,10 @@
 
 FROM golang:1.12
 
-RUN mkdir -p /obsidian-api-testing
-WORKDIR /obsidian-api-testing
+RUN mkdir -p /peridot-api-testing
+WORKDIR /peridot-api-testing
 
-ADD . /obsidian-api-testing
+ADD . /peridot-api-testing
 
 RUN go get -v ./...
 RUN go build

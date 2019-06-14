@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/swinslow/obsidian-api-testing/internal/testresult"
+	"github.com/swinslow/peridot-api-testing/internal/testresult"
 	"github.com/yudai/gojsondiff"
 )
 

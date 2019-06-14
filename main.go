@@ -7,8 +7,8 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/swinslow/obsidian-api-testing/internal/testresult"
-	"github.com/swinslow/obsidian-api-testing/test/endpoints"
+	"github.com/swinslow/peridot-api-testing/internal/testresult"
+	"github.com/swinslow/peridot-api-testing/test/endpoints"
 )
 
 func main() {

@@ -4,12 +4,42 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"os"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/swinslow/peridot-api-testing/internal/testresult"
 	"github.com/swinslow/peridot-api-testing/test/endpoints"
+	"github.com/swinslow/peridot-api-testing/test/utils"
 )
+
+func resetDB(root string) error {
+	resetCommand := `{"command": "resetDB"}`
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", root+"/admin/db", strings.NewReader(resetCommand))
+	if err != nil {
+		return fmt.Errorf("got error from resetDB http request creator: %s", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	utils.AddAuthHeader(nil, "", req, "admin")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+
+	b, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	bodystr := string(b)
+
+	if bodystr != `{"success": true}` {
+		return fmt.Errorf("got error from resetDB command: %s", bodystr)
+	}
+
+	return nil
+}
 
 func main() {
 	root := "http://sut:3005"
@@ -21,8 +51,13 @@ func main() {
 	// get all test suites
 	allTests := endpoints.GetTests()
 
-	// and run them
+	// and run them, resetting DB each time
 	for _, t := range allTests {
+		err := resetDB(root)
+		if err != nil {
+			fmt.Printf("Error resetting DB before test: %v", err)
+			os.Exit(1)
+		}
 		rs = t(root)
 		allRs = append(allRs, rs)
 	}

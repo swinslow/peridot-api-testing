@@ -4,7 +4,6 @@ package utils
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/swinslow/peridot-api-testing/internal/testresult"
@@ -51,13 +50,13 @@ func IsMatch(res *testresult.TestResult) bool {
 	return !d.Modified()
 }
 
-// addAuthHeader adds the appropriate auth token header to the
+// AddAuthHeader adds the appropriate auth token header to the
 // request object, before it is sent. Including "none" as the
 // username means that no token will be sent. The token values
 // included here are JWT values for the signing key "keyForTesting"
 // and it is intentional that they are used here -- but of course
 // they should not be used in production in any way!
-func addAuthHeader(res *testresult.TestResult, step string, req *http.Request, ghUsername string) {
+func AddAuthHeader(res *testresult.TestResult, step string, req *http.Request, ghUsername string) {
 	switch ghUsername {
 	case "none":
 		return
@@ -72,74 +71,8 @@ func addAuthHeader(res *testresult.TestResult, step string, req *http.Request, g
 	case "disabled":
 		req.Header.Set("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnaXRodWIiOiJkaXNhYmxlZCJ9.mqdsZIPPEb1RmmdI1zO0elHFieHbzmleYdg06qRfVbQ")
 	default:
-		FailTest(res, step, fmt.Errorf("invalid username %s", ghUsername))
+		if res != nil {
+			FailTest(res, step, fmt.Errorf("invalid username %s", ghUsername))
+		}
 	}
-}
-
-// GetContent makes an HTTP GET call to the indicated URL.
-// It checks whether the expected HTTP status code is returned;
-// a different code is treated as a failure.
-// On success, it reads the response body into a got byte slice
-// and handles closing the body. On failure, it fills in the
-// failure code in the TestResult and returns an error.
-func GetContent(res *testresult.TestResult, step string, url string, code int, ghUsername string) error {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		FailTest(res, step, err)
-		return err
-	}
-	addAuthHeader(res, step, req, ghUsername)
-	resp, err := client.Do(req)
-
-	return helperGetContent(res, resp, step, code)
-}
-
-// GetContentNoFollow makes an HTTP GET call to the indicated
-// URL, and will NOT follow redirects. It otherwise acts
-// identically to GetContent.
-func GetContentNoFollow(res *testresult.TestResult, step string, url string, code int, ghUsername string) error {
-	client := &http.Client{
-		CheckRedirect: func(req *http.Request, via []*http.Request) error {
-			return http.ErrUseLastResponse
-		},
-	}
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		FailTest(res, step, err)
-		return err
-	}
-	addAuthHeader(res, step, req, ghUsername)
-	resp, err := client.Do(req)
-	if err != nil {
-		FailTest(res, step, err)
-		return err
-	}
-
-	return helperGetContent(res, resp, step, code)
-}
-
-// helperGetContent does the rest of the GetContent or
-// GetContentNoFollow activities, after the decision is
-// made on whether to follow any redirects.
-func helperGetContent(res *testresult.TestResult, resp *http.Response, step string, code int) error {
-	// parse content body
-	b, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	if err != nil {
-		FailTest(res, step, err)
-		return err
-	}
-
-	// record in testresult
-	res.Got = b
-
-	// check expected status code
-	if resp.StatusCode != code {
-		err = fmt.Errorf("expected HTTP status code %d, got %d", code, resp.StatusCode)
-		FailTest(res, step, err)
-		return err
-	}
-
-	return nil
 }

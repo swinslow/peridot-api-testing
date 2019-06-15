@@ -7,14 +7,10 @@ import (
 	"github.com/swinslow/peridot-api-testing/test/utils"
 )
 
-func runAuthTests(root string) []*testresult.TestResult {
-	rs := []*testresult.TestResult{}
-	var res *testresult.TestResult
-
-	res = loginGet(root)
-	rs = append(rs, res)
-
-	return rs
+func getLoginTests() []testresult.TestFunc {
+	return []testresult.TestFunc{
+		loginGet,
+	}
 }
 
 func loginGet(root string) *testresult.TestResult {

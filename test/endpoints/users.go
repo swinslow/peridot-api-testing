@@ -7,14 +7,10 @@ import (
 	"github.com/swinslow/peridot-api-testing/test/utils"
 )
 
-func runUsersTests(root string) []*testresult.TestResult {
-	rs := []*testresult.TestResult{}
-	var res *testresult.TestResult
-
-	res = usersGet(root)
-	rs = append(rs, res)
-
-	return rs
+func getUsersTests() []testresult.TestFunc {
+	return []testresult.TestFunc{
+		usersGet,
+	}
 }
 
 func usersGet(root string) *testresult.TestResult {

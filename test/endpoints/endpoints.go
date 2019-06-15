@@ -6,20 +6,13 @@ import (
 	"github.com/swinslow/peridot-api-testing/internal/testresult"
 )
 
-// RunTests runs all of the endpoints test suites, and accumulates
-// the test results.
-func RunTests(root string) []*testresult.TestResult {
-	allRs := []*testresult.TestResult{}
-	var rs []*testresult.TestResult
+// GetTests returns all of the endpoints test suites.
+func GetTests() []testresult.TestFunc {
+	allTests := []testresult.TestFunc{}
 
-	rs = runHelloTests(root)
-	allRs = append(allRs, rs...)
+	allTests = append(allTests, getHelloTests()...)
+	allTests = append(allTests, getLoginTests()...)
+	allTests = append(allTests, getUsersTests()...)
 
-	rs = runUsersTests(root)
-	allRs = append(allRs, rs...)
-
-	rs = runAuthTests(root)
-	allRs = append(allRs, rs...)
-
-	return allRs
+	return allTests
 }

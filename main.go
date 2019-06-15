@@ -16,11 +16,16 @@ func main() {
 	anyFailed := false
 
 	allRs := []*testresult.TestResult{}
-	var rs []*testresult.TestResult
+	var rs *testresult.TestResult
 
-	// run all test suites
-	rs = endpoints.RunTests(root)
-	allRs = append(allRs, rs...)
+	// get all test suites
+	allTests := endpoints.GetTests()
+
+	// and run them
+	for _, t := range allTests {
+		rs = t(root)
+		allRs = append(allRs, rs)
+	}
 
 	// set up tabwriter for outputting test result table
 	w := tabwriter.NewWriter(os.Stdout, 8, 4, 1, ' ', 0)

@@ -31,3 +31,7 @@ type TestResult struct {
 	// Got holds the latest JSON byte slice that was received.
 	Got []byte
 }
+
+// TestFunc defines a function that takes a string with the
+// root URL for a test, and returns a TestResult.
+type TestFunc func(string) *TestResult

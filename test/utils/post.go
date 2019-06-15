@@ -27,10 +27,14 @@ func Post(res *testresult.TestResult, step string, url string, bodystr string, c
 	}
 	AddAuthHeader(res, step, req, ghUsername)
 	resp, err := client.Do(req)
+	if err != nil {
+		FailTest(res, step, err)
+		return err
+	}
+	defer resp.Body.Close()
 
 	// parse content body
 	b, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
 	if err != nil {
 		FailTest(res, step, err)
 		return err
@@ -43,6 +47,34 @@ func Post(res *testresult.TestResult, step string, url string, bodystr string, c
 	if resp.StatusCode != code {
 		err = fmt.Errorf("expected HTTP status code %d, got %d", code, resp.StatusCode)
 		FailTest(res, step, err)
+		return err
+	}
+
+	return nil
+}
+
+// PostNoRes acts similarly to Post, but does not take a testresult
+// or step value. It is primarily useful for fixture setup. It does
+// not check the response body (but does ensure it is closed).
+func PostNoRes(url string, bodystr string, code int, ghUsername string) error {
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", url, strings.NewReader(bodystr))
+	if err != nil {
+		return err
+	}
+	AddAuthHeader(nil, "0", req, ghUsername)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// ignoring content body
+
+	// check expected status code
+	if resp.StatusCode != code {
+		err = fmt.Errorf("expected HTTP status code %d, got %d", code, resp.StatusCode)
 		return err
 	}
 

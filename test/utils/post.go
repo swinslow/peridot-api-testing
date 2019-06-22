@@ -74,6 +74,8 @@ func PostNoRes(url string, bodystr string, code int, ghUsername string) error {
 
 	// check expected status code
 	if resp.StatusCode != code {
+		fmt.Printf("===> error in PostNoRes for %s\n", url)
+		fmt.Printf("===> resp: %#v\n", resp)
 		err = fmt.Errorf("expected HTTP status code %d, got %d", code, resp.StatusCode)
 		return err
 	}

@@ -13,6 +13,7 @@ func GetTests() []testresult.TestFunc {
 	allTests = append(allTests, getHelloTests()...)
 	allTests = append(allTests, getLoginTests()...)
 	allTests = append(allTests, getUsersTests()...)
+	allTests = append(allTests, getProjectsTests()...)
 
 	return allTests
 }

@@ -45,7 +45,16 @@ func ResetDB(root string) error {
 // state for functional tests.
 func SetupFixture(root string) error {
 	err := createUsers(root)
-	return err
+	if err != nil {
+		return err
+	}
+
+	err = createProjects(root)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func createUsers(root string) error {
@@ -77,6 +86,30 @@ func createUsers(root string) error {
 
 	// add disabled
 	body = `{"name": "Disabled User", "github": "disabled", "access": "disabled"}`
+	err = utils.PostNoRes(url, body, 200, "admin")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createProjects(root string) error {
+	url := root + "/projects"
+
+	body := `{"name": "xyzzy", "fullname": "The xyzzy Project"}`
+	err := utils.PostNoRes(url, body, 200, "admin")
+	if err != nil {
+		return err
+	}
+
+	body = `{"name": "frotz", "fullname": "The frotz Project"}`
+	err = utils.PostNoRes(url, body, 200, "admin")
+	if err != nil {
+		return err
+	}
+
+	body = `{"name": "gnusto", "fullname": "The gnusto Project"}`
 	err = utils.PostNoRes(url, body, 200, "admin")
 	if err != nil {
 		return err

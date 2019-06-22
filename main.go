@@ -26,12 +26,12 @@ func main() {
 	for _, t := range allTests {
 		err := fixtures.ResetDB(root)
 		if err != nil {
-			fmt.Printf("Error resetting DB before test: %v", err)
+			fmt.Printf("Error resetting DB before test: %v\n", err)
 			os.Exit(1)
 		}
 		err = fixtures.SetupFixture(root)
 		if err != nil {
-			fmt.Printf("Error setting fixtures before test: %v", err)
+			fmt.Printf("Error setting fixtures before test: %v\n", err)
 			os.Exit(1)
 		}
 

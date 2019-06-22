@@ -13,6 +13,9 @@ func getUsersTests() []testresult.TestFunc {
 		usersGetOperator,
 		usersPostAdmin,
 		usersPostOperator,
+		usersGetOneAsAdmin,
+		usersGetOneAsOperatorSelf,
+		usersGetOneAsOperatorOther,
 	}
 }
 
@@ -129,6 +132,75 @@ func usersPostOperator(root string) *testresult.TestResult {
 
 	if !utils.IsMatch(res) {
 		utils.FailMatch(res, "4")
+		return res
+	}
+
+	utils.Pass(res)
+	return res
+}
+
+func usersGetOneAsAdmin(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "users",
+		ID:      "GET (one-admin)",
+	}
+
+	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}]}`
+	url := root + "/users/2"
+	err := utils.GetContent(res, "1", url, 200, "admin")
+	if err != nil {
+		return res
+	}
+
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
+
+	utils.Pass(res)
+	return res
+}
+
+func usersGetOneAsOperatorSelf(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "users",
+		ID:      "GET (one-operator-self)",
+	}
+
+	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}]}`
+	url := root + "/users/2"
+	err := utils.GetContent(res, "1", url, 200, "operator")
+	if err != nil {
+		return res
+	}
+
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
+
+	utils.Pass(res)
+	return res
+}
+
+func usersGetOneAsOperatorOther(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "users",
+		ID:      "GET (one-operator-other)",
+	}
+
+	res.Wanted = `{"success": true, "user":{"id":4,"name":"Viewer User","github":"viewer","access":"viewer"}]}`
+	url := root + "/users/4"
+	err := utils.GetContent(res, "1", url, 200, "operator")
+	if err != nil {
+		return res
+	}
+
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
 		return res
 	}
 

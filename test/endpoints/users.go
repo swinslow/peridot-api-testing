@@ -146,7 +146,7 @@ func usersGetOneAsAdmin(root string) *testresult.TestResult {
 		ID:      "GET (one-admin)",
 	}
 
-	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}]}`
+	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}}`
 	url := root + "/users/2"
 	err := utils.GetContent(res, "1", url, 200, "admin")
 	if err != nil {
@@ -169,7 +169,7 @@ func usersGetOneAsOperatorSelf(root string) *testresult.TestResult {
 		ID:      "GET (one-operator-self)",
 	}
 
-	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}]}`
+	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}}`
 	url := root + "/users/2"
 	err := utils.GetContent(res, "1", url, 200, "operator")
 	if err != nil {
@@ -192,7 +192,7 @@ func usersGetOneAsOperatorOther(root string) *testresult.TestResult {
 		ID:      "GET (one-operator-other)",
 	}
 
-	res.Wanted = `{"success": true, "user":{"id":4,"name":"Viewer User","github":"viewer","access":"viewer"}]}`
+	res.Wanted = `{"success": true, "user":{"id":4,"github":"viewer"}}`
 	url := root + "/users/4"
 	err := utils.GetContent(res, "1", url, 200, "operator")
 	if err != nil {

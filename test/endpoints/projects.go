@@ -15,6 +15,8 @@ func getProjectsTests() []testresult.TestFunc {
 		projectsGetOneViewer,
 		projectsPutOneOperator,
 		projectsPutOneViewer,
+		projectsDeleteOneAdmin,
+		projectsDeleteOneOperator,
 	}
 }
 
@@ -211,6 +213,84 @@ func projectsPutOneViewer(root string) *testresult.TestResult {
 	// now, confirm that the project was NOT actually updated
 	res.Wanted = `{"success": true, "project":{"id":2,"name":"frotz","fullname":"The frotz Project"}}`
 	err = utils.GetContent(res, "3", url, 200, "operator")
+	if err != nil {
+		return res
+	}
+
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "4")
+		return res
+	}
+
+	utils.Pass(res)
+	return res
+}
+
+// ===== DELETE /projects/id
+
+func projectsDeleteOneAdmin(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "projects/{id}",
+		ID:      "DELETE (admin)",
+	}
+
+	url := root + "/projects/2"
+
+	// send a delete request
+	res.Wanted = `{"success": true}`
+	err := utils.Delete(res, "1", url, ``, 200, "admin")
+	if err != nil {
+		return res
+	}
+
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
+
+	// now, confirm that the project is gone
+	allURL := root + "/projects"
+	res.Wanted = `{"projects":[{"id":1,"name":"xyzzy","fullname":"The xyzzy Project"},{"id":3,"name":"gnusto","fullname":"The gnusto Project"}]}`
+	err = utils.GetContent(res, "3", allURL, 200, "viewer")
+	if err != nil {
+		return res
+	}
+
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "4")
+		return res
+	}
+
+	utils.Pass(res)
+	return res
+}
+
+func projectsDeleteOneOperator(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "projects/{id}",
+		ID:      "DELETE (operator)",
+	}
+
+	url := root + "/projects/2"
+
+	// try and fail to delete the project
+	res.Wanted = `{"success": false, "error": "Access denied"}`
+	err := utils.Delete(res, "1", url, ``, 403, "operator")
+	if err != nil {
+		return res
+	}
+
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
+
+	// now, confirm that the project has NOT been deleted
+	allURL := root + "/projects"
+	res.Wanted = `{"projects":[{"id":1,"name":"xyzzy","fullname":"The xyzzy Project"},{"id":2,"name":"frotz","fullname":"The frotz Project"},{"id":3,"name":"gnusto","fullname":"The gnusto Project"}]}`
+	err = utils.GetContent(res, "3", allURL, 200, "viewer")
 	if err != nil {
 		return res
 	}

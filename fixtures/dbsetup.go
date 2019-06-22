@@ -65,28 +65,28 @@ func createUsers(root string) error {
 
 	// add operator
 	body := `{"name": "Operator User", "github": "operator", "access": "operator"}`
-	err := utils.PostNoRes(url, body, 200, "admin")
+	err := utils.PostNoRes(url, body, 201, "admin")
 	if err != nil {
 		return err
 	}
 
 	// add commenter
 	body = `{"name": "Commenter User", "github": "commenter", "access": "commenter"}`
-	err = utils.PostNoRes(url, body, 200, "admin")
+	err = utils.PostNoRes(url, body, 201, "admin")
 	if err != nil {
 		return err
 	}
 
 	// add viewer
 	body = `{"name": "Viewer User", "github": "viewer", "access": "viewer"}`
-	err = utils.PostNoRes(url, body, 200, "admin")
+	err = utils.PostNoRes(url, body, 201, "admin")
 	if err != nil {
 		return err
 	}
 
 	// add disabled
 	body = `{"name": "Disabled User", "github": "disabled", "access": "disabled"}`
-	err = utils.PostNoRes(url, body, 200, "admin")
+	err = utils.PostNoRes(url, body, 201, "admin")
 	if err != nil {
 		return err
 	}
@@ -98,19 +98,19 @@ func createProjects(root string) error {
 	url := root + "/projects"
 
 	body := `{"name": "xyzzy", "fullname": "The xyzzy Project"}`
-	err := utils.PostNoRes(url, body, 200, "admin")
+	err := utils.PostNoRes(url, body, 201, "admin")
 	if err != nil {
 		return err
 	}
 
 	body = `{"name": "frotz", "fullname": "The frotz Project"}`
-	err = utils.PostNoRes(url, body, 200, "admin")
+	err = utils.PostNoRes(url, body, 201, "admin")
 	if err != nil {
 		return err
 	}
 
 	body = `{"name": "gnusto", "fullname": "The gnusto Project"}`
-	err = utils.PostNoRes(url, body, 200, "admin")
+	err = utils.PostNoRes(url, body, 201, "admin")
 	if err != nil {
 		return err
 	}

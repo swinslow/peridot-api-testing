@@ -83,7 +83,7 @@ func usersPostAdmin(root string) *testresult.TestResult {
 	body := `{"name": "Steve Winslow", "github": "swinslow", "access": "operator"}`
 	res.Wanted = `{"success": true, "id": 6}`
 	url := root + "/users"
-	err := utils.Post(res, "1", url, body, 200, "admin")
+	err := utils.Post(res, "1", url, body, 201, "admin")
 	if err != nil {
 		return res
 	}

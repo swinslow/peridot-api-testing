@@ -58,7 +58,7 @@ func projectsPostOperator(root string) *testresult.TestResult {
 	// first, send POST to add a new project
 	body := `{"name": "plugh", "fullname": "The plugh Project"}`
 	res.Wanted = `{"success": true, "id": 4}`
-	err := utils.Post(res, "1", url, body, 200, "operator")
+	err := utils.Post(res, "1", url, body, 201, "operator")
 	if err != nil {
 		return res
 	}

@@ -50,6 +50,7 @@ func SetupFixture(root string) error {
 		createProjects,
 		createSubprojects,
 		createRepos,
+		createRepoBranches,
 	}
 
 	for _, f := range createFuncs {
@@ -154,6 +155,31 @@ func createRepos(root string) error {
 
 	for _, c := range calls {
 		body := fmt.Sprintf(`{"subproject_id": %d, "name": "%s", "address": "%s"}`, c.subprojectID, c.name, c.address)
+		err := utils.PostNoRes(url, body, 201, "operator")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func createRepoBranches(root string) error {
+	calls := []struct {
+		repoID uint32
+		branch string
+	}{
+		{2, "master"},
+		{2, "dev"},
+		{4, "master"},
+		{2, "dev-2.1"},
+		{1, "master"},
+		{1, "testing"},
+	}
+
+	for _, c := range calls {
+		url := fmt.Sprintf("%s/repos/%d/branches", root, c.repoID)
+		body := fmt.Sprintf(`{"branch": "%s"}`, c.branch)
 		err := utils.PostNoRes(url, body, 201, "operator")
 		if err != nil {
 			return err

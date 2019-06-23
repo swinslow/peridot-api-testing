@@ -81,7 +81,7 @@ func usersPostAdmin(root string) *testresult.TestResult {
 
 	// first, send POST to add a new user
 	body := `{"name": "Steve Winslow", "github": "swinslow", "access": "operator"}`
-	res.Wanted = `{"success": true, "id": 6}`
+	res.Wanted = `{"id": 6}`
 	url := root + "/users"
 	err := utils.Post(res, "1", url, body, 201, "admin")
 	if err != nil {
@@ -118,7 +118,7 @@ func usersPostOperator(root string) *testresult.TestResult {
 
 	// first, send POST to add a new user
 	body := `{"name": "Steve Winslow", "github": "swinslow", "access": "operator"}`
-	res.Wanted = `{"success": false, "error": "Access denied"}`
+	res.Wanted = `{"error": "Access denied"}`
 	url := root + "/users"
 	err := utils.Post(res, "1", url, body, 403, "operator")
 	if err != nil {
@@ -155,7 +155,7 @@ func usersGetOneAdmin(root string) *testresult.TestResult {
 		ID:      "GET (admin)",
 	}
 
-	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}}`
+	res.Wanted = `{"user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}}`
 	url := root + "/users/2"
 	err := utils.GetContent(res, "1", url, 200, "admin")
 	if err != nil {
@@ -178,7 +178,7 @@ func usersGetOneOperatorSelf(root string) *testresult.TestResult {
 		ID:      "GET (operator-self)",
 	}
 
-	res.Wanted = `{"success": true, "user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}}`
+	res.Wanted = `{"user":{"id":2,"name":"Operator User","github":"operator","access":"operator"}}`
 	url := root + "/users/2"
 	err := utils.GetContent(res, "1", url, 200, "operator")
 	if err != nil {
@@ -201,7 +201,7 @@ func usersGetOneOperatorOther(root string) *testresult.TestResult {
 		ID:      "GET (operator-other)",
 	}
 
-	res.Wanted = `{"success": true, "user":{"id":4,"github":"viewer"}}`
+	res.Wanted = `{"user":{"id":4,"github":"viewer"}}`
 	url := root + "/users/4"
 	err := utils.GetContent(res, "1", url, 200, "operator")
 	if err != nil {
@@ -241,7 +241,7 @@ func usersPutOneAdmin(root string) *testresult.TestResult {
 	}
 
 	// now, confirm that the user data was actually updated
-	res.Wanted = `{"success":true, "user":{"id":5,"name":"Steve Winslow","github":"swinslow","access":"operator"}}`
+	res.Wanted = `{"user":{"id":5,"name":"Steve Winslow","github":"swinslow","access":"operator"}}`
 	err = utils.GetContent(res, "3", url, 200, "admin")
 	if err != nil {
 		return res
@@ -278,7 +278,7 @@ func usersPutOneOperatorSelf(root string) *testresult.TestResult {
 	}
 
 	// now, confirm that the user data was actually updated
-	res.Wanted = `{"success":true, "user":{"id":2,"name":"Steve Winslow","github":"operator","access":"operator"}}`
+	res.Wanted = `{"user":{"id":2,"name":"Steve Winslow","github":"operator","access":"operator"}}`
 	err = utils.GetContent(res, "3", url, 200, "admin")
 	if err != nil {
 		return res
@@ -302,7 +302,7 @@ func usersPutOneOperatorOther(root string) *testresult.TestResult {
 
 	// try and fail to send PUT to modify other's name
 	body := `{"name": "OOPS"}`
-	res.Wanted = `{"success": false, "error": "Access denied"}`
+	res.Wanted = `{"error": "Access denied"}`
 	url := root + "/users/3"
 	err := utils.Put(res, "1", url, body, 403, "operator")
 	if err != nil {
@@ -316,7 +316,7 @@ func usersPutOneOperatorOther(root string) *testresult.TestResult {
 
 	// also try and fail to send PUT to modify other's github
 	body = `{"github": "oops"}`
-	res.Wanted = `{"success": false, "error": "Access denied"}`
+	res.Wanted = `{"error": "Access denied"}`
 	err = utils.Put(res, "3", url, body, 403, "operator")
 	if err != nil {
 		return res
@@ -328,7 +328,7 @@ func usersPutOneOperatorOther(root string) *testresult.TestResult {
 	}
 
 	// finally, confirm that the other user's data was NOT actually updated
-	res.Wanted = `{"success":true, "user":{"id":3,"github":"commenter"}}`
+	res.Wanted = `{"user":{"id":3,"github":"commenter"}}`
 	err = utils.GetContent(res, "5", url, 200, "operator")
 	if err != nil {
 		return res

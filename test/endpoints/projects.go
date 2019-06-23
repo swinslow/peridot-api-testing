@@ -59,7 +59,7 @@ func projectsPostOperator(root string) *testresult.TestResult {
 
 	// first, send POST to add a new project
 	body := `{"name": "plugh", "fullname": "The plugh Project"}`
-	res.Wanted = `{"success": true, "id": 4}`
+	res.Wanted = `{"id": 4}`
 	err := utils.Post(res, "1", url, body, 201, "operator")
 	if err != nil {
 		return res
@@ -97,7 +97,7 @@ func projectsPostViewer(root string) *testresult.TestResult {
 
 	// first, try and fail to add a new project
 	body := `{"name": "plugh", "fullname": "The plugh Project"}`
-	res.Wanted = `{"success": false, "error": "Access denied"}`
+	res.Wanted = `{"error": "Access denied"}`
 	err := utils.Post(res, "1", url, body, 403, "viewer")
 	if err != nil {
 		return res
@@ -133,7 +133,7 @@ func projectsGetOneViewer(root string) *testresult.TestResult {
 		ID:      "GET (viewer)",
 	}
 
-	res.Wanted = `{"success": true, "project":{"id":2,"name":"frotz","fullname":"The frotz Project"}}`
+	res.Wanted = `{"project":{"id":2,"name":"frotz","fullname":"The frotz Project"}}`
 	url := root + "/projects/2"
 	err := utils.GetContent(res, "1", url, 200, "viewer")
 	if err != nil {
@@ -174,7 +174,7 @@ func projectsPutOneOperator(root string) *testresult.TestResult {
 	}
 
 	// now, confirm that the project was actually updated
-	res.Wanted = `{"success": true, "project":{"id":2,"name":"plugh","fullname":"The plugh Project"}}`
+	res.Wanted = `{"project":{"id":2,"name":"plugh","fullname":"The plugh Project"}}`
 	err = utils.GetContent(res, "3", url, 200, "operator")
 	if err != nil {
 		return res
@@ -199,7 +199,7 @@ func projectsPutOneViewer(root string) *testresult.TestResult {
 	url := root + "/projects/2"
 
 	body := `{"name": "plugh", "fullname": "The plugh Project"}`
-	res.Wanted = `{"success": false, "error": "Access denied"}`
+	res.Wanted = `{"error": "Access denied"}`
 	err := utils.Put(res, "1", url, body, 403, "viewer")
 	if err != nil {
 		return res
@@ -211,7 +211,7 @@ func projectsPutOneViewer(root string) *testresult.TestResult {
 	}
 
 	// now, confirm that the project was NOT actually updated
-	res.Wanted = `{"success": true, "project":{"id":2,"name":"frotz","fullname":"The frotz Project"}}`
+	res.Wanted = `{"project":{"id":2,"name":"frotz","fullname":"The frotz Project"}}`
 	err = utils.GetContent(res, "3", url, 200, "operator")
 	if err != nil {
 		return res
@@ -276,7 +276,7 @@ func projectsDeleteOneOperator(root string) *testresult.TestResult {
 	url := root + "/projects/2"
 
 	// try and fail to delete the project
-	res.Wanted = `{"success": false, "error": "Access denied"}`
+	res.Wanted = `{"error": "Access denied"}`
 	err := utils.Delete(res, "1", url, ``, 403, "operator")
 	if err != nil {
 		return res

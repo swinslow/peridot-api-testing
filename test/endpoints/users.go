@@ -228,14 +228,14 @@ func usersPutOneAdmin(root string) *testresult.TestResult {
 
 	// first, send PUT to modify an existing user
 	body := `{"name": "Steve Winslow", "github": "swinslow", "access": "operator"}`
-	res.Wanted = `{"success": true}`
+	res.Wanted = ``
 	url := root + "/users/5"
-	err := utils.Put(res, "1", url, body, 200, "admin")
+	err := utils.Put(res, "1", url, body, 204, "admin")
 	if err != nil {
 		return res
 	}
 
-	if !utils.IsMatch(res) {
+	if !utils.IsEmpty(res) {
 		utils.FailMatch(res, "2")
 		return res
 	}
@@ -265,14 +265,14 @@ func usersPutOneOperatorSelf(root string) *testresult.TestResult {
 
 	// first, send PUT to modify own name (NOT github / access)
 	body := `{"name": "Steve Winslow"}`
-	res.Wanted = `{"success": true}`
+	res.Wanted = ``
 	url := root + "/users/2"
-	err := utils.Put(res, "1", url, body, 200, "operator")
+	err := utils.Put(res, "1", url, body, 204, "operator")
 	if err != nil {
 		return res
 	}
 
-	if !utils.IsMatch(res) {
+	if !utils.IsEmpty(res) {
 		utils.FailMatch(res, "2")
 		return res
 	}

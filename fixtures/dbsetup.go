@@ -29,12 +29,13 @@ func ResetDB(root string) error {
 		return err
 	}
 
-	b, err := ioutil.ReadAll(resp.Body)
-	resp.Body.Close()
-	bodystr := string(b)
-
-	if bodystr != `{"success": true}` {
-		return fmt.Errorf("got error from resetDB command: %s", bodystr)
+	if resp.StatusCode != 204 {
+		b, err := ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			return fmt.Errorf("expected 204, got %d from resetDB command: %s; with error reading response body: %v", resp.StatusCode, string(b), err)
+		}
+		return fmt.Errorf("expected 204, got %d from resetDB command: %s", resp.StatusCode, string(b))
 	}
 
 	return nil

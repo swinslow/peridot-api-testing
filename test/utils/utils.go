@@ -50,6 +50,12 @@ func IsMatch(res *testresult.TestResult) bool {
 	return !d.Modified()
 }
 
+// IsEmpty checks for an empty wanted string and a zero-length got
+// byte slice.
+func IsEmpty(res *testresult.TestResult) bool {
+	return res.Wanted == "" && len(res.Got) == 0
+}
+
 // AddAuthHeader adds the appropriate auth token header to the
 // request object, before it is sent. Including "none" as the
 // username means that no token will be sent. The token values

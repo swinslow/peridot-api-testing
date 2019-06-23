@@ -162,13 +162,13 @@ func projectsPutOneOperator(root string) *testresult.TestResult {
 
 	// first, send PUT to update an existing project
 	body := `{"name": "plugh", "fullname": "The plugh Project"}`
-	res.Wanted = `{"success": true}`
-	err := utils.Put(res, "1", url, body, 200, "operator")
+	res.Wanted = ``
+	err := utils.Put(res, "1", url, body, 204, "operator")
 	if err != nil {
 		return res
 	}
 
-	if !utils.IsMatch(res) {
+	if !utils.IsEmpty(res) {
 		utils.FailMatch(res, "2")
 		return res
 	}
@@ -238,13 +238,13 @@ func projectsDeleteOneAdmin(root string) *testresult.TestResult {
 	url := root + "/projects/2"
 
 	// send a delete request
-	res.Wanted = `{"success": true}`
-	err := utils.Delete(res, "1", url, ``, 200, "admin")
+	res.Wanted = ``
+	err := utils.Delete(res, "1", url, ``, 204, "admin")
 	if err != nil {
 		return res
 	}
 
-	if !utils.IsMatch(res) {
+	if !utils.IsEmpty(res) {
 		utils.FailMatch(res, "2")
 		return res
 	}

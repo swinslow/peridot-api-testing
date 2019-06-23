@@ -54,6 +54,11 @@ func SetupFixture(root string) error {
 		return err
 	}
 
+	err = createSubprojects(root)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -98,19 +103,49 @@ func createProjects(root string) error {
 	url := root + "/projects"
 
 	body := `{"name": "xyzzy", "fullname": "The xyzzy Project"}`
-	err := utils.PostNoRes(url, body, 201, "admin")
+	err := utils.PostNoRes(url, body, 201, "operator")
 	if err != nil {
 		return err
 	}
 
 	body = `{"name": "frotz", "fullname": "The frotz Project"}`
-	err = utils.PostNoRes(url, body, 201, "admin")
+	err = utils.PostNoRes(url, body, 201, "operator")
 	if err != nil {
 		return err
 	}
 
 	body = `{"name": "gnusto", "fullname": "The gnusto Project"}`
-	err = utils.PostNoRes(url, body, 201, "admin")
+	err = utils.PostNoRes(url, body, 201, "operator")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func createSubprojects(root string) error {
+	url := root + "/subprojects"
+
+	body := `{"project_id": 2, "name": "blorple", "fullname": "The blorple Subproject"}`
+	err := utils.PostNoRes(url, body, 201, "operator")
+	if err != nil {
+		return err
+	}
+
+	body = `{"project_id": 2, "name": "filfre", "fullname": "The filfre Subproject"}`
+	err = utils.PostNoRes(url, body, 201, "operator")
+	if err != nil {
+		return err
+	}
+
+	body = `{"project_id": 2, "name": "fweep", "fullname": "The fweep Subproject"}`
+	err = utils.PostNoRes(url, body, 201, "operator")
+	if err != nil {
+		return err
+	}
+
+	body = `{"project_id": 3, "name": "girgol", "fullname": "The girgol Subproject"}`
+	err = utils.PostNoRes(url, body, 201, "operator")
 	if err != nil {
 		return err
 	}

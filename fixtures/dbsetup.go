@@ -69,32 +69,23 @@ func createUsers(root string) error {
 	// ID 1, name "Admin", github "admin", access "admin" is
 	// created by default on creation and each reset
 
-	// add operator
-	body := `{"name": "Operator User", "github": "operator", "access": "operator"}`
-	err := utils.PostNoRes(url, body, 201, "admin")
-	if err != nil {
-		return err
+	calls := []struct {
+		name   string
+		github string
+		access string
+	}{
+		{"Operator User", "operator", "operator"},
+		{"Commenter User", "commenter", "commenter"},
+		{"Viewer User", "viewer", "viewer"},
+		{"Disabled User", "disabled", "disabled"},
 	}
 
-	// add commenter
-	body = `{"name": "Commenter User", "github": "commenter", "access": "commenter"}`
-	err = utils.PostNoRes(url, body, 201, "admin")
-	if err != nil {
-		return err
-	}
-
-	// add viewer
-	body = `{"name": "Viewer User", "github": "viewer", "access": "viewer"}`
-	err = utils.PostNoRes(url, body, 201, "admin")
-	if err != nil {
-		return err
-	}
-
-	// add disabled
-	body = `{"name": "Disabled User", "github": "disabled", "access": "disabled"}`
-	err = utils.PostNoRes(url, body, 201, "admin")
-	if err != nil {
-		return err
+	for _, c := range calls {
+		body := fmt.Sprintf(`{"name": "%s", "github": "%s", "access": "%s"}`, c.name, c.github, c.access)
+		err := utils.PostNoRes(url, body, 201, "admin")
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -103,22 +94,21 @@ func createUsers(root string) error {
 func createProjects(root string) error {
 	url := root + "/projects"
 
-	body := `{"name": "xyzzy", "fullname": "The xyzzy Project"}`
-	err := utils.PostNoRes(url, body, 201, "operator")
-	if err != nil {
-		return err
+	calls := []struct {
+		name     string
+		fullname string
+	}{
+		{"xyzzy", "The xyzzy Project"},
+		{"frotz", "The frotz Project"},
+		{"gnusto", "The gnusto Project"},
 	}
 
-	body = `{"name": "frotz", "fullname": "The frotz Project"}`
-	err = utils.PostNoRes(url, body, 201, "operator")
-	if err != nil {
-		return err
-	}
-
-	body = `{"name": "gnusto", "fullname": "The gnusto Project"}`
-	err = utils.PostNoRes(url, body, 201, "operator")
-	if err != nil {
-		return err
+	for _, c := range calls {
+		body := fmt.Sprintf(`{"name": "%s", "fullname": "%s"}`, c.name, c.fullname)
+		err := utils.PostNoRes(url, body, 201, "operator")
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -127,28 +117,23 @@ func createProjects(root string) error {
 func createSubprojects(root string) error {
 	url := root + "/subprojects"
 
-	body := `{"project_id": 2, "name": "blorple", "fullname": "The blorple Subproject"}`
-	err := utils.PostNoRes(url, body, 201, "operator")
-	if err != nil {
-		return err
+	calls := []struct {
+		projectID uint32
+		name      string
+		fullname  string
+	}{
+		{2, "blorple", "The blorple Subproject"},
+		{2, "filfre", "The filfre Subproject"},
+		{2, "fweep", "The fweep Subproject"},
+		{3, "girgol", "The girgol Subproject"},
 	}
 
-	body = `{"project_id": 2, "name": "filfre", "fullname": "The filfre Subproject"}`
-	err = utils.PostNoRes(url, body, 201, "operator")
-	if err != nil {
-		return err
-	}
-
-	body = `{"project_id": 2, "name": "fweep", "fullname": "The fweep Subproject"}`
-	err = utils.PostNoRes(url, body, 201, "operator")
-	if err != nil {
-		return err
-	}
-
-	body = `{"project_id": 3, "name": "girgol", "fullname": "The girgol Subproject"}`
-	err = utils.PostNoRes(url, body, 201, "operator")
-	if err != nil {
-		return err
+	for _, c := range calls {
+		body := fmt.Sprintf(`{"project_id": %d, "name": "%s", "fullname": "%s"}`, c.projectID, c.name, c.fullname)
+		err := utils.PostNoRes(url, body, 201, "operator")
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

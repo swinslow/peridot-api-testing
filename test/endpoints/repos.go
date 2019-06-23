@@ -13,11 +13,11 @@ func getReposTests() []testresult.TestFunc {
 		reposPostOperator,
 		reposSubGetViewer,
 		reposSubPostOperator,
-		// reposGetOneViewer,
-		// reposPutOneOperator,
-		// reposPutOneViewer,
-		// reposDeleteOneAdmin,
-		// reposDeleteOneOperator,
+		reposGetOneViewer,
+		reposPutOneOperator,
+		reposPutOneViewer,
+		reposDeleteOneAdmin,
+		reposDeleteOneOperator,
 	}
 }
 
@@ -154,182 +154,183 @@ func reposSubPostOperator(root string) *testresult.TestResult {
 	return res
 }
 
-// // ===== GET /subprojects/id
+// ===== GET /repos/id
 
-// func subprojectsGetOneViewer(root string) *testresult.TestResult {
-// 	res := &testresult.TestResult{
-// 		Suite:   "endpoints",
-// 		Element: "subprojects/{id}",
-// 		ID:      "GET (viewer)",
-// 	}
+func reposGetOneViewer(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "repos/{id}",
+		ID:      "GET (viewer)",
+	}
 
-// 	res.Wanted = `{"subproject":{"id":2,"project_id":2,"name":"filfre","fullname":"The filfre Subproject"}}`
-// 	url := root + "/subprojects/2"
-// 	err := utils.GetContent(res, "1", url, 200, "viewer")
-// 	if err != nil {
-// 		return res
-// 	}
+	url := root + "/repos/2"
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "2")
-// 		return res
-// 	}
+	res.Wanted = `{"repo":{"id":2,"subproject_id":2,"name":"filfre-api","address":"https://example.com/filfre-api.git"}}`
+	err := utils.GetContent(res, "1", url, 200, "viewer")
+	if err != nil {
+		return res
+	}
 
-// 	utils.Pass(res)
-// 	return res
-// }
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
 
-// // ===== PUT /subprojects/id
+	utils.Pass(res)
+	return res
+}
 
-// func subprojectsPutOneOperator(root string) *testresult.TestResult {
-// 	res := &testresult.TestResult{
-// 		Suite:   "endpoints",
-// 		Element: "subprojects/{id}",
-// 		ID:      "PUT (operator)",
-// 	}
+// ===== PUT /repos/id
 
-// 	url := root + "/subprojects/2"
+func reposPutOneOperator(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "repos/{id}",
+		ID:      "PUT (operator)",
+	}
 
-// 	// first, send PUT to update an existing subproject
-// 	body := `{"name": "plugh", "fullname": "The plugh Subproject"}`
-// 	res.Wanted = ``
-// 	err := utils.Put(res, "1", url, body, 204, "operator")
-// 	if err != nil {
-// 		return res
-// 	}
+	url := root + "/repos/2"
 
-// 	if !utils.IsEmpty(res) {
-// 		utils.FailMatch(res, "2")
-// 		return res
-// 	}
+	// first, send PUT to update an existing repo
+	body := `{"name": "filfre-superapi", "address": "https://example.com/filfre-superapi.git"}`
+	res.Wanted = ``
+	err := utils.Put(res, "1", url, body, 204, "operator")
+	if err != nil {
+		return res
+	}
 
-// 	// now, confirm that the subproject was actually updated
-// 	res.Wanted = `{"subproject":{"id":2,"project_id":2,"name":"plugh","fullname":"The plugh Subproject"}}`
-// 	err = utils.GetContent(res, "3", url, 200, "operator")
-// 	if err != nil {
-// 		return res
-// 	}
+	if !utils.IsEmpty(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "4")
-// 		return res
-// 	}
+	// now, confirm that the repo was actually updated
+	res.Wanted = `{"repo":{"id":2,"subproject_id":2,"name": "filfre-superapi", "address": "https://example.com/filfre-superapi.git"}}`
+	err = utils.GetContent(res, "3", url, 200, "operator")
+	if err != nil {
+		return res
+	}
 
-// 	utils.Pass(res)
-// 	return res
-// }
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "4")
+		return res
+	}
 
-// func subprojectsPutOneViewer(root string) *testresult.TestResult {
-// 	res := &testresult.TestResult{
-// 		Suite:   "endpoints",
-// 		Element: "subprojects/{id}",
-// 		ID:      "PUT (viewer)",
-// 	}
+	utils.Pass(res)
+	return res
+}
 
-// 	url := root + "/subprojects/2"
+func reposPutOneViewer(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "repos/{id}",
+		ID:      "PUT (viewer)",
+	}
 
-// 	body := `{"name": "plugh", "fullname": "The plugh Subproject"}`
-// 	res.Wanted = `{"error": "Access denied"}`
-// 	err := utils.Put(res, "1", url, body, 403, "viewer")
-// 	if err != nil {
-// 		return res
-// 	}
+	url := root + "/repos/2"
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "2")
-// 		return res
-// 	}
+	body := `{"name": "filfre-superapi", "address": "https://example.com/filfre-superapi.git"}`
+	res.Wanted = `{"error": "Access denied"}`
+	err := utils.Put(res, "1", url, body, 403, "viewer")
+	if err != nil {
+		return res
+	}
 
-// 	// now, confirm that the subproject was NOT actually updated
-// 	res.Wanted = `{"subproject":{"id":2,"project_id":2,"name":"filfre","fullname":"The filfre Subproject"}}`
-// 	err = utils.GetContent(res, "3", url, 200, "operator")
-// 	if err != nil {
-// 		return res
-// 	}
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "4")
-// 		return res
-// 	}
+	// now, confirm that the repo was NOT actually updated
+	res.Wanted = `{"repo":{"id":2,"subproject_id":2,"name":"filfre-api","address":"https://example.com/filfre-api.git"}}`
+	err = utils.GetContent(res, "3", url, 200, "operator")
+	if err != nil {
+		return res
+	}
 
-// 	utils.Pass(res)
-// 	return res
-// }
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "4")
+		return res
+	}
 
-// // ===== DELETE /subprojects/id
+	utils.Pass(res)
+	return res
+}
 
-// func subprojectsDeleteOneAdmin(root string) *testresult.TestResult {
-// 	res := &testresult.TestResult{
-// 		Suite:   "endpoints",
-// 		Element: "subprojects/{id}",
-// 		ID:      "DELETE (admin)",
-// 	}
+// ===== DELETE /repos/id
 
-// 	url := root + "/subprojects/2"
+func reposDeleteOneAdmin(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "repos/{id}",
+		ID:      "DELETE (admin)",
+	}
 
-// 	// send a delete request
-// 	res.Wanted = ``
-// 	err := utils.Delete(res, "1", url, ``, 204, "admin")
-// 	if err != nil {
-// 		return res
-// 	}
+	url := root + "/repos/2"
 
-// 	if !utils.IsEmpty(res) {
-// 		utils.FailMatch(res, "2")
-// 		return res
-// 	}
+	// send a delete request
+	res.Wanted = ``
+	err := utils.Delete(res, "1", url, ``, 204, "admin")
+	if err != nil {
+		return res
+	}
 
-// 	// now, confirm that the subproject is gone
-// 	allURL := root + "/subprojects"
-// 	res.Wanted = `{"subprojects":[{"id":1,"project_id":2,"name":"blorple","fullname":"The blorple Subproject"},{"id":3,"project_id":2,"name":"fweep","fullname":"The fweep Subproject"},{"id":4,"project_id":3,"name":"girgol","fullname":"The girgol Subproject"}]}`
-// 	err = utils.GetContent(res, "3", allURL, 200, "viewer")
-// 	if err != nil {
-// 		return res
-// 	}
+	if !utils.IsEmpty(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "4")
-// 		return res
-// 	}
+	// now, confirm that the repo is gone
+	allURL := root + "/repos"
+	res.Wanted = `{"repos":[{"id":1,"subproject_id":2,"name":"filfre-core","address":"https://example.com/filfre-core.git"},{"id":3,"subproject_id":1,"name":"blorple-c","address":"https://example.com/blorple-c.git"},{"id":4,"subproject_id":4,"name":"girgol","address":"https://example.com/girgol.git"}]}`
+	err = utils.GetContent(res, "3", allURL, 200, "viewer")
+	if err != nil {
+		return res
+	}
 
-// 	utils.Pass(res)
-// 	return res
-// }
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "4")
+		return res
+	}
 
-// func subprojectsDeleteOneOperator(root string) *testresult.TestResult {
-// 	res := &testresult.TestResult{
-// 		Suite:   "endpoints",
-// 		Element: "subprojects/{id}",
-// 		ID:      "DELETE (operator)",
-// 	}
+	utils.Pass(res)
+	return res
+}
 
-// 	url := root + "/subprojects/2"
+func reposDeleteOneOperator(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "repos/{id}",
+		ID:      "DELETE (operator)",
+	}
 
-// 	// try and fail to delete the subproject
-// 	res.Wanted = `{"error": "Access denied"}`
-// 	err := utils.Delete(res, "1", url, ``, 403, "operator")
-// 	if err != nil {
-// 		return res
-// 	}
+	url := root + "/repos/2"
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "2")
-// 		return res
-// 	}
+	// try and fail to delete the repo
+	res.Wanted = `{"error": "Access denied"}`
+	err := utils.Delete(res, "1", url, ``, 403, "operator")
+	if err != nil {
+		return res
+	}
 
-// 	// now, confirm that the subproject has NOT been deleted
-// 	allURL := root + "/subprojects"
-// 	res.Wanted = `{"subprojects":[{"id":1,"project_id":2,"name":"blorple","fullname":"The blorple Subproject"},{"id":2,"project_id":2,"name":"filfre","fullname":"The filfre Subproject"},{"id":3,"project_id":2,"name":"fweep","fullname":"The fweep Subproject"},{"id":4,"project_id":3,"name":"girgol","fullname":"The girgol Subproject"}]}`
-// 	err = utils.GetContent(res, "3", allURL, 200, "viewer")
-// 	if err != nil {
-// 		return res
-// 	}
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "4")
-// 		return res
-// 	}
+	// now, confirm that the repo has NOT been deleted
+	allURL := root + "/repos"
+	res.Wanted = `{"repos":[{"id":1,"subproject_id":2,"name":"filfre-core","address":"https://example.com/filfre-core.git"},{"id":2,"subproject_id":2,"name":"filfre-api","address":"https://example.com/filfre-api.git"},{"id":3,"subproject_id":1,"name":"blorple-c","address":"https://example.com/blorple-c.git"},{"id":4,"subproject_id":4,"name":"girgol","address":"https://example.com/girgol.git"}]}`
+	err = utils.GetContent(res, "3", allURL, 200, "viewer")
+	if err != nil {
+		return res
+	}
 
-// 	utils.Pass(res)
-// 	return res
-// }
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "4")
+		return res
+	}
+
+	utils.Pass(res)
+	return res
+}

@@ -11,8 +11,8 @@ func getReposTests() []testresult.TestFunc {
 	return []testresult.TestFunc{
 		reposGetViewer,
 		reposPostOperator,
-		// reposSubGetViewer,
-		// reposSubPostOperator,
+		reposSubGetViewer,
+		reposSubPostOperator,
 		// reposGetOneViewer,
 		// reposPutOneOperator,
 		// reposPutOneViewer,
@@ -71,7 +71,7 @@ func reposPostOperator(root string) *testresult.TestResult {
 		return res
 	}
 
-	// now, confirm that a new project was actually added
+	// now, confirm that a new repo was actually added
 	res.Wanted = `{"repos":[{"id":1,"subproject_id":2,"name":"filfre-core","address":"https://example.com/filfre-core.git"},{"id":2,"subproject_id":2,"name":"filfre-api","address":"https://example.com/filfre-api.git"},{"id":3,"subproject_id":1,"name":"blorple-c","address":"https://example.com/blorple-c.git"},{"id":4,"subproject_id":4,"name":"girgol","address":"https://example.com/girgol.git"},{"id":5,"subproject_id":2,"name":"filfre-webapp","address":"https://example.com/filfre-webapp.git"}]}`
 	err = utils.GetContent(res, "3", url, 200, "operator")
 	if err != nil {
@@ -87,72 +87,72 @@ func reposPostOperator(root string) *testresult.TestResult {
 	return res
 }
 
-// // ===== GET /projects/id/subprojects
+// ===== GET /subprojects/id/repos
 
-// func subprojectsSubGetViewer(root string) *testresult.TestResult {
-// 	res := &testresult.TestResult{
-// 		Suite:   "endpoints",
-// 		Element: "projects/{id}/subprojects",
-// 		ID:      "GET (viewer)",
-// 	}
+func reposSubGetViewer(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "subprojects/{id}/repos",
+		ID:      "GET (viewer)",
+	}
 
-// 	url := root + "/projects/2/subprojects"
+	url := root + "/subprojects/2/repos"
 
-// 	res.Wanted = `{"subprojects":[{"id":1,"project_id":2,"name":"blorple","fullname":"The blorple Subproject"},{"id":2,"project_id":2,"name":"filfre","fullname":"The filfre Subproject"},{"id":3,"project_id":2,"name":"fweep","fullname":"The fweep Subproject"}]}`
-// 	err := utils.GetContent(res, "1", url, 200, "viewer")
-// 	if err != nil {
-// 		return res
-// 	}
+	res.Wanted = `{"repos":[{"id":1,"subproject_id":2,"name":"filfre-core","address":"https://example.com/filfre-core.git"},{"id":2,"subproject_id":2,"name":"filfre-api","address":"https://example.com/filfre-api.git"}]}`
+	err := utils.GetContent(res, "1", url, 200, "viewer")
+	if err != nil {
+		return res
+	}
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "2")
-// 		return res
-// 	}
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
 
-// 	utils.Pass(res)
-// 	return res
-// }
+	utils.Pass(res)
+	return res
+}
 
-// // ===== POST /projects/id/subprojects
+// ===== POST /subprojects/id/repos
 
-// func subprojectsSubPostOperator(root string) *testresult.TestResult {
-// 	res := &testresult.TestResult{
-// 		Suite:   "endpoints",
-// 		Element: "subprojects",
-// 		ID:      "POST (operator)",
-// 	}
+func reposSubPostOperator(root string) *testresult.TestResult {
+	res := &testresult.TestResult{
+		Suite:   "endpoints",
+		Element: "subprojects/{id}/repos",
+		ID:      "POST (operator)",
+	}
 
-// 	url := root + "/projects/2/subprojects"
+	url := root + "/subprojects/2/repos"
 
-// 	// first, send POST to add a new project
-// 	body := `{"name": "plugh", "fullname": "The plugh Subproject"}`
-// 	res.Wanted = `{"id": 5}`
-// 	err := utils.Post(res, "1", url, body, 201, "operator")
-// 	if err != nil {
-// 		return res
-// 	}
+	// first, send POST to add a new repo
+	body := `{"name": "filfre-webapp", "address": "https://example.com/filfre-webapp.git"}`
+	res.Wanted = `{"id": 5}`
+	err := utils.Post(res, "1", url, body, 201, "operator")
+	if err != nil {
+		return res
+	}
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "2")
-// 		return res
-// 	}
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "2")
+		return res
+	}
 
-// 	// now, confirm that a new project was actually added
-// 	url = root + "/subprojects"
-// 	res.Wanted = `{"subprojects":[{"id":1,"project_id":2,"name":"blorple","fullname":"The blorple Subproject"},{"id":2,"project_id":2,"name":"filfre","fullname":"The filfre Subproject"},{"id":3,"project_id":2,"name":"fweep","fullname":"The fweep Subproject"},{"id":4,"project_id":3,"name":"girgol","fullname":"The girgol Subproject"},{"id": 5, "project_id": 2, "name": "plugh", "fullname": "The plugh Subproject"}]}`
-// 	err = utils.GetContent(res, "3", url, 200, "operator")
-// 	if err != nil {
-// 		return res
-// 	}
+	// now, confirm that a new repo was actually added
+	url = root + "/repos"
+	res.Wanted = `{"repos":[{"id":1,"subproject_id":2,"name":"filfre-core","address":"https://example.com/filfre-core.git"},{"id":2,"subproject_id":2,"name":"filfre-api","address":"https://example.com/filfre-api.git"},{"id":3,"subproject_id":1,"name":"blorple-c","address":"https://example.com/blorple-c.git"},{"id":4,"subproject_id":4,"name":"girgol","address":"https://example.com/girgol.git"},{"id":5,"subproject_id":2,"name":"filfre-webapp","address":"https://example.com/filfre-webapp.git"}]}`
+	err = utils.GetContent(res, "3", url, 200, "operator")
+	if err != nil {
+		return res
+	}
 
-// 	if !utils.IsMatch(res) {
-// 		utils.FailMatch(res, "4")
-// 		return res
-// 	}
+	if !utils.IsMatch(res) {
+		utils.FailMatch(res, "4")
+		return res
+	}
 
-// 	utils.Pass(res)
-// 	return res
-// }
+	utils.Pass(res)
+	return res
+}
 
 // // ===== GET /subprojects/id
 

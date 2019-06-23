@@ -5,6 +5,8 @@ package main
 import (
 	"fmt"
 	"os"
+	"reflect"
+	"runtime"
 	"text/tabwriter"
 
 	"github.com/swinslow/peridot-api-testing/fixtures"
@@ -23,7 +25,9 @@ func main() {
 	allTests := endpoints.GetTests()
 
 	// and run them, resetting DB each time
+	fmt.Printf("Testing (%d total): \n", len(allTests))
 	for _, t := range allTests {
+		fmt.Printf("  %s\n", runtime.FuncForPC(reflect.ValueOf(t).Pointer()).Name())
 		err := fixtures.ResetDB(root)
 		if err != nil {
 			fmt.Printf("Error resetting DB before test: %v\n", err)
@@ -38,6 +42,8 @@ func main() {
 		rs = t(root)
 		allRs = append(allRs, rs)
 	}
+
+	fmt.Printf("\n\n")
 
 	// set up tabwriter for outputting test result table
 	w := tabwriter.NewWriter(os.Stdout, 8, 4, 1, ' ', 0)

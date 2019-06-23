@@ -58,7 +58,7 @@ func subprojectsPostOperator(root string) *testresult.TestResult {
 
 	url := root + "/subprojects"
 
-	// first, send POST to add a new project
+	// first, send POST to add a new subproject
 	body := `{"project_id": 3, "name": "plugh", "fullname": "The plugh Subproject"}`
 	res.Wanted = `{"id": 5}`
 	err := utils.Post(res, "1", url, body, 201, "operator")
@@ -71,7 +71,7 @@ func subprojectsPostOperator(root string) *testresult.TestResult {
 		return res
 	}
 
-	// now, confirm that a new project was actually added
+	// now, confirm that a new subproject was actually added
 	res.Wanted = `{"subprojects":[{"id":1,"project_id":2,"name":"blorple","fullname":"The blorple Subproject"},{"id":2,"project_id":2,"name":"filfre","fullname":"The filfre Subproject"},{"id":3,"project_id":2,"name":"fweep","fullname":"The fweep Subproject"},{"id":4,"project_id":3,"name":"girgol","fullname":"The girgol Subproject"},{"id": 5, "project_id": 3, "name": "plugh", "fullname": "The plugh Subproject"}]}`
 	err = utils.GetContent(res, "3", url, 200, "operator")
 	if err != nil {
@@ -118,13 +118,13 @@ func subprojectsSubGetViewer(root string) *testresult.TestResult {
 func subprojectsSubPostOperator(root string) *testresult.TestResult {
 	res := &testresult.TestResult{
 		Suite:   "endpoints",
-		Element: "subprojects",
+		Element: "projects/{id}/subprojects",
 		ID:      "POST (operator)",
 	}
 
 	url := root + "/projects/2/subprojects"
 
-	// first, send POST to add a new project
+	// first, send POST to add a new subproject
 	body := `{"name": "plugh", "fullname": "The plugh Subproject"}`
 	res.Wanted = `{"id": 5}`
 	err := utils.Post(res, "1", url, body, 201, "operator")
@@ -137,7 +137,7 @@ func subprojectsSubPostOperator(root string) *testresult.TestResult {
 		return res
 	}
 
-	// now, confirm that a new project was actually added
+	// now, confirm that a new subproject was actually added
 	url = root + "/subprojects"
 	res.Wanted = `{"subprojects":[{"id":1,"project_id":2,"name":"blorple","fullname":"The blorple Subproject"},{"id":2,"project_id":2,"name":"filfre","fullname":"The filfre Subproject"},{"id":3,"project_id":2,"name":"fweep","fullname":"The fweep Subproject"},{"id":4,"project_id":3,"name":"girgol","fullname":"The girgol Subproject"},{"id": 5, "project_id": 2, "name": "plugh", "fullname": "The plugh Subproject"}]}`
 	err = utils.GetContent(res, "3", url, 200, "operator")

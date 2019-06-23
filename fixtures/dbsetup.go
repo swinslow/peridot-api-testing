@@ -45,19 +45,18 @@ func ResetDB(root string) error {
 // objects in its database, so that it is in a useful
 // state for functional tests.
 func SetupFixture(root string) error {
-	err := createUsers(root)
-	if err != nil {
-		return err
+	createFuncs := []func(string) error{
+		createUsers,
+		createProjects,
+		createSubprojects,
+		createRepos,
 	}
 
-	err = createProjects(root)
-	if err != nil {
-		return err
-	}
-
-	err = createSubprojects(root)
-	if err != nil {
-		return err
+	for _, f := range createFuncs {
+		err := f(root)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -130,6 +129,31 @@ func createSubprojects(root string) error {
 
 	for _, c := range calls {
 		body := fmt.Sprintf(`{"project_id": %d, "name": "%s", "fullname": "%s"}`, c.projectID, c.name, c.fullname)
+		err := utils.PostNoRes(url, body, 201, "operator")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func createRepos(root string) error {
+	url := root + "/repos"
+
+	calls := []struct {
+		subprojectID uint32
+		name         string
+		address      string
+	}{
+		{2, "filfre-core", "https://example.com/filfre-core.git"},
+		{2, "filfre-api", "https://example.com/filfre-api.git"},
+		{1, "blorple-c", "https://example.com/blorple-c.git"},
+		{4, "girgol", "https://example.com/girgol.git"},
+	}
+
+	for _, c := range calls {
+		body := fmt.Sprintf(`{"subproject_id": %d, "name": "%s", "address": "%s"}`, c.subprojectID, c.name, c.address)
 		err := utils.PostNoRes(url, body, 201, "operator")
 		if err != nil {
 			return err

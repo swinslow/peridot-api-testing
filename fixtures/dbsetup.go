@@ -51,6 +51,7 @@ func SetupFixture(root string) error {
 		createSubprojects,
 		createRepos,
 		createRepoBranches,
+		createRepoPulls,
 	}
 
 	for _, f := range createFuncs {
@@ -180,6 +181,32 @@ func createRepoBranches(root string) error {
 	for _, c := range calls {
 		url := fmt.Sprintf("%s/repos/%d/branches", root, c.repoID)
 		body := fmt.Sprintf(`{"branch": "%s"}`, c.branch)
+		err := utils.PostNoRes(url, body, 201, "operator")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func createRepoPulls(root string) error {
+	calls := []struct {
+		repoID uint32
+		branch string
+		vType  string
+		v      string
+	}{
+		{1, "master", "commit", "22337864e74c9f54b1da4a64aaf7587ffa788039"},
+		{2, "dev-2.1", "commit", "7864e74c9f54b1da4a64aaf7587ffa7880392233"},
+		{2, "dev", "commit", "e74c9f54b1da4a64aaf7587ffa78803922337864"},
+		{2, "dev-2.1", "commit", "9f54b1da4a64aaf7587ffa78803922337864e74c"},
+		{1, "testing", "commit", "b1da4a64aaf7587ffa78803922337864e74c9f54"},
+	}
+
+	for _, c := range calls {
+		url := fmt.Sprintf("%s/repos/%d/branches/%s", root, c.repoID, c.branch)
+		body := fmt.Sprintf(`{"%s": "%s"}`, c.vType, c.v)
 		err := utils.PostNoRes(url, body, 201, "operator")
 		if err != nil {
 			return err

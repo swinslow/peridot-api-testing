@@ -65,7 +65,7 @@ func repoBranchesSubPostOperator(root string) *testresult.TestResult {
 		return res
 	}
 
-	// now, confirm that a new repo was actually added
+	// now, confirm that a new repo branch was actually added
 	// should be returned in alphabetical order
 	res.Wanted = `{"branches":["dev","dev-2.1","issue-47","master"]}`
 	err = utils.GetContent(res, "3", url, 200, "operator")

@@ -52,6 +52,7 @@ func SetupFixture(root string) error {
 		createRepos,
 		createRepoBranches,
 		createRepoPulls,
+		createAgents,
 	}
 
 	for _, f := range createFuncs {
@@ -207,6 +208,36 @@ func createRepoPulls(root string) error {
 	for _, c := range calls {
 		url := fmt.Sprintf("%s/repos/%d/branches/%s", root, c.repoID, c.branch)
 		body := fmt.Sprintf(`{"%s": "%s"}`, c.vType, c.v)
+		err := utils.PostNoRes(url, body, 201, "operator")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func createAgents(root string) error {
+	url := root + "/agents"
+
+	calls := []struct {
+		name         string
+		isActive     bool
+		address      string
+		port         int
+		isCodeReader bool
+		isSpdxReader bool
+		isCodeWriter bool
+		isSpdxWriter bool
+	}{
+		{"do-magic", true, "https://example.com/do-magic", 2087, false, true, false, false},
+		{"read-magic", true, "https://example.com/read-magic", 2088, true, true, false, true},
+		{"disabled", false, "localhost", 2057, false, true, false, false},
+		{"wevs", true, "localhost", 5010, true, true, true, false},
+	}
+
+	for _, c := range calls {
+		body := fmt.Sprintf(`{"name":"%s", "is_active":%t, "address":"%s", "port":%d, "is_codereader":%t, "is_spdxreader":%t, "is_codewriter":%t, "is_spdxwriter":%t}`, c.name, c.isActive, c.address, c.port, c.isCodeReader, c.isSpdxReader, c.isCodeWriter, c.isSpdxWriter)
 		err := utils.PostNoRes(url, body, 201, "operator")
 		if err != nil {
 			return err

@@ -19,6 +19,7 @@ func GetTests() []testresult.TestFunc {
 	allTests = append(allTests, getRepoBranchesTests()...)
 	allTests = append(allTests, getRepoPullsTests()...)
 	allTests = append(allTests, getAgentsTests()...)
+	allTests = append(allTests, getJobsTests()...)
 
 	return allTests
 }

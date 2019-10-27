@@ -53,6 +53,7 @@ func SetupFixture(root string) error {
 		createRepoBranches,
 		createRepoPulls,
 		createAgents,
+		createJobs,
 	}
 
 	for _, f := range createFuncs {
@@ -238,6 +239,32 @@ func createAgents(root string) error {
 
 	for _, c := range calls {
 		body := fmt.Sprintf(`{"name":"%s", "is_active":%t, "address":"%s", "port":%d, "is_codereader":%t, "is_spdxreader":%t, "is_codewriter":%t, "is_spdxwriter":%t}`, c.name, c.isActive, c.address, c.port, c.isCodeReader, c.isSpdxReader, c.isCodeWriter, c.isSpdxWriter)
+		err := utils.PostNoRes(url, body, 201, "operator")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func createJobs(root string) error {
+	calls := []struct {
+		repopullID  uint32
+		agentID     uint32
+		priorJobIDs string
+		isReady     bool
+		config      string
+	}{
+		{2, 1, "[]", true, `{"kv": {"hi":"steve"}}`},
+		{4, 1, "[]", true, `{}`},
+		{4, 2, "[2]", true, `{"codereader": {"primary": {"path": "/somewhere"}}}`},
+		{4, 4, "[2,3]", false, `{"kv": {"hello":"world"}, "codereader": {"godeps": {"priorjob_id": 3}}, "spdxreader": {"primary": {"path": "/path/wherever"}, "godeps": {"priorjob_id": 3}}}`},
+	}
+
+	for _, c := range calls {
+		url := fmt.Sprintf("%s/repopulls/%d/jobs", root, c.repopullID)
+		body := fmt.Sprintf(`{"agent_id": %d, "priorjob_ids": %s, "is_ready": %t, "config": %s}`, c.agentID, c.priorJobIDs, c.isReady, c.config)
 		err := utils.PostNoRes(url, body, 201, "operator")
 		if err != nil {
 			return err
